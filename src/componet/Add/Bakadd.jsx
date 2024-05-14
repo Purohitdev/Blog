@@ -173,7 +173,7 @@ function Bakadd() {
 
                                 <div className="full">
                                     <input
-                                        placeholder='image'
+                                        placeholder='image(url)'
                                         type="text"
                                         name="avatar"
                                         onChange={handleChange}
