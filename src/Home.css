@@ -160,8 +160,8 @@
 
 .extra {
     background: linear-gradient(to right, rgba(255, 255, 255, 0.295), rgba(0, 0, 0, 0.878)), url(https://hyperon.qodeinteractive.com/wp-content/uploads/2018/02/inner-background-img-5.jpg );
-    /* background-color: #e9ecef73; */
-    height: 100vh;
+      min-height: 120vh;
+    background-repeat: no-repeat;
 
 }
 
