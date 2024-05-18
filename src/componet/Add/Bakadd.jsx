@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react'
 import { Formik } from 'formik';
 import axios from 'axios';
 import { Navigate, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+
 
 
 
@@ -9,18 +11,11 @@ function Bakadd() {
     const navigate = useNavigate();
     const [file, setFile] = useState(null);
 
-    // const inputref = useRef();
-    // const onChangeImage = (e, handleChange) => {
-    // console.log(e.target.files);
-    // setFile(URL.createObjectURL(e.target.files[0]));
-    // handleChange(e)
 
-    // console.log(URL.createObjectURL(inputref.current.files[0]));
-    // localStorage.setItem("image", URL.createObjectURL(inputref.current.files[0]) )
+  
 
-
-    // }
     return (
+        
 
         <div className='showw new'>
             <div className='form'>
@@ -50,24 +45,15 @@ function Bakadd() {
                         if (!values.avatar) {
                             errors.avatar = 'image Required';
                         }
+
+                        // if(values.avatar && values.describe && values.date && values.mb && values.title && values.name && bu ){
+                        //     toast.success("Blog Successfully Added!");
+                        //     console.log("click")
+
+                        // }
                         return errors;
                     }}
                     onSubmit={(values, { setSubmitting }) => {
-                        // const formdata = new FormData()
-                        // formdata.append("name", values.name)
-                        // formdata.append("title", values.title)
-                        // formdata.append("mb", values.mb)
-                        // formdata.append("date", values.date)
-                        // formdata.append("describe", values.describe)
-                        // formdata.append("avatar", values.avatar);
-
-
-
-                        // if(file){
-                        //     formdata.append("avtar", inputref.current.files[0])
-                        // }
-
-
 
 
                         setTimeout(() => {
@@ -80,8 +66,15 @@ function Bakadd() {
                                 )
                                 .then((res) => {
                                     console.log(res);
-                                    setSubmitting(false)
-                                    navigate("/")
+                                    setSubmitting(false);
+                                    toast.success("Blog Successfully Added!");
+                                    
+
+
+
+                                    
+                                    navigate("/");
+                                    
 
 
                                 })
@@ -184,9 +177,10 @@ function Bakadd() {
                                 </div>
                                 <div className='full buttt'>
 
-                                    <button type="submit">
-                                        Submit
+                                    <button type="submit" >
+                                        submit blog
                                     </button>
+                                 
                                 </div>
                                 
                             </div>
