@@ -7,8 +7,7 @@ import { motion } from "framer-motion";
 import { truncate } from '../utile';
 import { CiBookmark } from "react-icons/ci";
 import {  toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-const notify = () => toast.warn("Blog Successfully delte!");
+import {notification} from "antd";
 
 
 
@@ -36,6 +35,8 @@ function Card(props) {
             .then((res) => {
                 console.log(res);
                 fetchData();
+                notification.error({message:"Blog deleted successfully"})
+
             })
             .catch((err) => console.log(err));
     };
