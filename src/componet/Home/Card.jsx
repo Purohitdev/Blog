@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { truncate } from '../utile';
 import { CiBookmark } from "react-icons/ci";
 import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const notify = () => toast.warn("Blog Successfully delte!");
 
 
