@@ -6,7 +6,6 @@ import { MdDeleteSweep, MdReadMore } from "react-icons/md";
 import { motion } from "framer-motion";
 import { truncate } from '../utile';
 import { CiBookmark } from "react-icons/ci";
-import {  toast } from 'react-toastify';
 import {notification} from "antd";
 
 
@@ -64,7 +63,7 @@ function Card(props) {
                                         </div>
                                     </div>
                                     <div className="icon-box"  onClick={() => deleteBlog(blog.id)} >
-                                        <MdDeleteSweep onClick={notify} />
+                                        <MdDeleteSweep />
                                     </div>
                                 </div>
                                 <div className="upper-card flex">
