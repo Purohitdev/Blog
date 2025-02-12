@@ -1,85 +1,41 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import axios from 'axios';
-import { Navigate, useNavigate } from "react-router-dom";
-import {notification} from "antd";
-
-
-
+import { useNavigate } from "react-router-dom";
+import { notification } from "antd";
 
 function Bakadd() {
     const navigate = useNavigate();
-    const [file, setFile] = useState(null);
-
-
-  
+    
+    // Handle textarea change to preserve tab spaces
+    const handleTextareaChange = (e, handleChange) => {
+        const value = e.target.value.replace(/\t/g, '    '); // Replace tabs with four spaces
+        handleChange(e, value);
+    };
 
     return (
-        
-
         <div className='showw new'>
             <div className='form'>
-
-
                 <h1>ADD BLOG</h1>
-
                 <Formik
-                    initialValues={{ name: '', title: '', mb: '', date: '', describe: '', avatar: '' }}
+                    initialValues={{ name: '', title: '', describe: '', avatar: '' }}
                     validate={values => {
                         const errors = {};
-                        if (!values.name) {
-                            errors.name = 'name Required';
-                        }
-                        if (!values.title) {
-                            errors.title = 'title Required';
-                        }
-                        if (!values.mb) {
-                            errors.mb = 'mb Required';
-                        }
-                        if (!values.date) {
-                            errors.date = 'date Required';
-                        }
-                        if (!values.describe) {
-                            errors.describe = 'describe Required';
-                        }
-                        if (!values.avatar) {
-                            errors.avatar = 'image Required';
-                        }
-
-                        // if(values.avatar && values.describe && values.date && values.mb && values.title && values.name && bu ){
-                        //     toast.success("Blog Successfully Added!");
-                        //     console.log("click")
-
-                        // }
+                        if (!values.name.trim()) errors.name = 'Name Required';
+                        if (!values.title.trim()) errors.title = 'Title Required';
+                        if (!values.describe.trim()) errors.describe = 'Description Required';
+                        if (!values.avatar.trim()) errors.avatar = 'Image URL Required';
                         return errors;
                     }}
                     onSubmit={(values, { setSubmitting }) => {
-
-
-                        setTimeout(() => {
-                            axios
-                                .post(
-                                    // "https://6620d6863bf790e070b0dea1.mockapi.io/records/Blogs",
-                                    // formdata
-                                    "https://6620d6863bf790e070b0dea1.mockapi.io/records/Blogs",
-                                    values
-                                )
-                                .then((res) => {
-                                    console.log(res);
-                                    setSubmitting(false);
-                                    notification.success({message:"Blog added successfully"})                                    
-                                    
-
-
-
-                                    
-                                    navigate("/");
-                                    
-
-
-                                })
-                                .catch((err) => console.log(err));
-                        }, 400);
+                        const blogData = { ...values, date: new Date().toISOString().split('T')[0] };
+                        axios.post("https://6620d6863bf790e070b0dea1.mockapi.io/records/Blogs", blogData)
+                            .then(() => {
+                                notification.success({ message: "Blog added successfully" });
+                                navigate("/");
+                            })
+                            .catch(err => console.log(err))
+                            .finally(() => setSubmitting(false));
                     }}
                 >
                     {({
@@ -89,8 +45,7 @@ function Bakadd() {
                         handleChange,
                         handleBlur,
                         handleSubmit,
-                        isSubmitting,
-                        /* and other goodies */
+                        isSubmitting
                     }) => (
                         <form onSubmit={handleSubmit}>
                             <div className="flex">
@@ -115,58 +70,23 @@ function Bakadd() {
                                         value={values.title}
                                     />
                                     <p className='err'> ~{errors.title && touched.title && errors.title}</p>
-
                                 </div>
                             </div>
-
-
-                            <div className="flex">
-
-                                <div className='full'>
-                                    <input
-                                        placeholder='Blog mb'
-                                        type="number"
-                                        name="mb"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.mb}
-                                    />
-                                    <p className='err'>  ~ {errors.mb && touched.mb && errors.mb}</p>
-
-                                </div>
-
-                                <div className="full">
-                                    <input
-                                        placeholder='date'
-                                        type="month"
-                                        name="date"
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        value={values.date}
-                                    />
-                                    <p className='err'> ~{errors.date && touched.date && errors.date}</p>
-                                </div>
-
-                            </div>
-
                             <div className="full">
-
                                 <textarea
-                                    placeholder='describe'
-                                    type="text"
+                                    placeholder='Describe your blog'
                                     name="describe"
-                                    onChange={handleChange}
+                                    onChange={(e) => handleTextareaChange(e, handleChange)}
                                     onBlur={handleBlur}
                                     value={values.describe}
+                                    style={{ whiteSpace: "pre-wrap" }}
                                 />
                                 <p className='err'> ~{errors.describe && touched.describe && errors.describe}</p>
-
                             </div>
                             <div className="flex">
-
                                 <div className="full">
                                     <input
-                                        placeholder='image(url)'
+                                        placeholder='Image URL'
                                         type="text"
                                         name="avatar"
                                         onChange={handleChange}
@@ -176,22 +96,17 @@ function Bakadd() {
                                     <p className='err'> ~{errors.avatar && touched.avatar && errors.avatar}</p>
                                 </div>
                                 <div className='full buttt'>
-
-                                    <button type="submit" >
-                                        submit blog
+                                    <button type="submit" disabled={isSubmitting}>
+                                        Submit Blog
                                     </button>
-                                 
                                 </div>
-                                
                             </div>
-                            
-
                         </form>
                     )}
                 </Formik>
             </div>
         </div>
-    )
+    );
 }
 
-export default Bakadd
+export default Bakadd;

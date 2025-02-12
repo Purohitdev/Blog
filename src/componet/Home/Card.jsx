@@ -1,19 +1,23 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Modal } from 'react-bootstrap';
-import { MdDeleteSweep, MdReadMore } from "react-icons/md";
+import { MdDeleteSweep, MdReadMore, MdContentCopy } from "react-icons/md";
 import { motion } from "framer-motion";
 import { truncate } from '../utile';
 import { CiBookmark } from "react-icons/ci";
-import {notification} from "antd";
-
-
+import { notification } from "antd";
 
 function Card(props) {
     const [blogs, setBlogs] = useState([]);
     const [selectedBlog, setSelectedBlog] = useState(null);
     const [showModal, setShowModal] = useState(false);
+
+    // Function to calculate text size in MB
+    const getTextSizeInMB = (text) => {
+        const textSizeInBytes = new TextEncoder().encode(text).length;
+        const sizeInMB = textSizeInBytes / (1024 * 1024); // Convert bytes to MB
+        return sizeInMB.toFixed(2); // Return size with 2 decimal places
+    };
 
     useEffect(() => {
         fetchData();
@@ -23,7 +27,12 @@ function Card(props) {
         axios
             .get("https://6620d6863bf790e070b0dea1.mockapi.io/records/Blogs")
             .then((res) => {
-                setBlogs(res.data);
+                // Add the `mb` field to each blog based on the description size
+                const blogsWithMB = res.data.map(blog => ({
+                    ...blog,
+                    mb: getTextSizeInMB(blog.describe) // Calculate the size of the description
+                }));
+                setBlogs(blogsWithMB);
             })
             .catch((err) => console.log(err));
     };
@@ -34,10 +43,21 @@ function Card(props) {
             .then((res) => {
                 console.log(res);
                 fetchData();
-                notification.error({message:"Blog deleted successfully"})
-
+                notification.error({ message: "Blog deleted successfully" });
             })
             .catch((err) => console.log(err));
+    };
+
+    const copyTextToClipboard = () => {
+        if (selectedBlog) {
+            const fullText = `${selectedBlog.title}:\n\n${selectedBlog.describe}`;
+            navigator.clipboard.writeText(fullText).then(() => {
+                notification.success({ message: "Blog copied to clipboard!" });
+            }).catch(err => {
+                notification.error({ message: "Failed to copy blog" });
+                console.error(err);
+            });
+        }
     };
 
     const handleOpenModal = (blog) => {
@@ -62,7 +82,7 @@ function Card(props) {
                                             <img src={blog.avatar} alt="" />
                                         </div>
                                     </div>
-                                    <div className="icon-box"  onClick={() => deleteBlog(blog.id)} >
+                                    <div className="icon-box" onClick={() => deleteBlog(blog.id)}>
                                         <MdDeleteSweep />
                                     </div>
                                 </div>
@@ -77,7 +97,7 @@ function Card(props) {
                                 </div>
                                 <div className="upper-card">
                                     <div className="md under">
-                                        <p>{blog.mb}.mb</p>
+                                        <p>{blog.mb} MB</p>
                                     </div>
                                     <div className="date under">
                                         <p>last updated ~{blog.date}</p>
@@ -101,28 +121,28 @@ function Card(props) {
                 <Modal.Body>
                     <div className="dov">
                         <div className='upper-img'>
-                          <img src={selectedBlog && selectedBlog.avatar} alt="" /> 
+                            <img src={selectedBlog && selectedBlog.avatar} alt="" />
                         </div>
                         <div className="detaill">
                             <div className="flex">
-                                <h3>`{selectedBlog && selectedBlog.title}:</h3>
-                                <span className='isnaa'><CiBookmark /></span>
+                                <h3>{selectedBlog && selectedBlog.title}:</h3>
+                                <span className="copy-icon" onClick={copyTextToClipboard}>
+                                    <MdContentCopy />
+                                </span>
                             </div>
 
-                            <p>{selectedBlog && selectedBlog.describe}</p>
+                            <p style={{ whiteSpace: 'pre-wrap' }}>
+                                {selectedBlog && selectedBlog.describe}
+                            </p>
                             <h5>Written by~{selectedBlog && selectedBlog.name}</h5>
 
                             <div className="flex">
-
-                                <p>{selectedBlog && selectedBlog.mb}.mb</p>
+                                <p>{selectedBlog && selectedBlog.mb} MB</p>
                                 <h6>last updated ~{selectedBlog && selectedBlog.date}</h6>
-
-
                             </div>
                         </div>
                     </div>
                 </Modal.Body>
-
             </Modal>
         </div>
     );
